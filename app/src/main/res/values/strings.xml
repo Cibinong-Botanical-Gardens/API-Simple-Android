@@ -1,0 +1,57 @@
+<resources>
+    <!--  Default   -->
+    <string name="app_name">Simpel</string>
+
+    <!--  On Boarding  -->
+    <string name="cancel">Cancel</string>
+    <string name="agree">Agree</string>
+    <string name="back_allow_access">Back Allow Access</string>
+    <string name="title_permission">Device Data Access Permission</string>
+    <string name="text_permissiom">In order to improve the service of the application, we need your permission to access this device data.</string>
+    <string name="text_forced">To be able to use the plantáu service, please allow access to device data. Don\'t worry, your data will be safe!</string>
+
+    <string name="header_onboard">Report immediately if there is a vulnerable area!</string>
+    <string name="desc_onboard">For the safety and comfort of us all.</string>
+
+    <string name="skip">Skip</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started!</string>
+
+    <!--  Login  -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="title_login">Login</string>
+    <string name="text_login">Please fill in the data with the account that has been registered in this application.</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="hint_signup">Don\'t have an account yet?</string>
+    <string name="hint_signup_button">Register Now!</string>
+    <string name="text_policy">By using our application, you agree to the Plantáu <b>Terms of Service and Privacy Policy.</b></string>
+
+    <!--  Register  -->
+    <string name="title_register">Register</string>
+    <string name="text_register">Please fill in the data to be registered correctly.</string>
+    <string name="hint_signin">Already have an account?</string>
+    <string name="hint_signin_button">Login</string>
+
+    <string name="hint_first_name">First Name</string>
+    <string name="hint_last_name">Last Name</string>
+    <string name="hint_phone">Phone Number</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+
+    <string name="title_home">Beranda</string>
+    <string name="title_lapor">Lokasi</string>
+    <string name="title_fab">Lapor!</string>
+    <string name="title_history">History</string>
+    <string name="title_account">Akun</string>
+
+    <!--  No Internet  -->
+    <string name="retry">Retry</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="title_no_internet">Oops! There is something wrong.</string>
+    <string name="text_no_internet">Make sure you are connected to the Internet.</string>
+
+
+</resources>

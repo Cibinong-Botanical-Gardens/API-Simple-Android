@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_notification"
+        android:actionLayout="@id/toolbar"
+        android:icon="@drawable/ic_outline_email_24"
+        android:title="Notification"
+        app:showAsAction="ifRoom"
+        app:iconTint="?android:attr/windowBackground" />
+
+    <item
+        android:id="@+id/menu_help"
+        android:actionLayout="@id/toolbar"
+        android:icon="@drawable/ic_outline_help_24"
+        android:title="Help"
+        app:showAsAction="ifRoom"
+        app:iconTint="?android:attr/windowBackground" />
+</menu>
