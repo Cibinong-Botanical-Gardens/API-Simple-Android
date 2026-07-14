@@ -16,14 +16,14 @@
             android:layout_height="250dp"
             android:layout_gravity="center"
             android:layout_marginBottom="15dp"
-            android:src="@drawable/img_world_childrens_day_amico" />
+            android:src="@drawable/img_location_amico" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
-            android:text="Thank you for installing!"
+            android:text="Tambah Laporan?"
             android:textSize="20sp"
             android:textStyle="bold"/>
 
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:layout_gravity="center"
-            android:text="Want to know what's in plantau? Come on, check the help menu directly to find out how to use this application."
+            android:text="Apakah anda ingin melapor?\n Ini akan membutuhkan fitur kamera dan GPS."
             android:textAlignment="center"/>
 
         <LinearLayout
@@ -45,7 +45,7 @@
                 android:layout_width="0dp"
                 android:layout_height="?actionBarSize"
                 android:layout_weight="1"
-                android:text="Not now"
+                android:text="Tidak"
                 app:cornerRadius="50dp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
@@ -58,7 +58,7 @@
                 android:layout_width="0dp"
                 android:layout_height="?actionBarSize"
                 android:layout_weight="1"
-                android:text="Okay!"
+                android:text="Ya"
                 app:cornerRadius="50dp"
                 style="@style/Widget.MaterialComponents.Button"/>
 
