@@ -367,7 +367,7 @@
 
                 <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="?actionBarSize"
                     android:layout_marginTop="10dp"
                     android:text="Cek bagaimana kami melindungi datamu"
                     android:textSize="11sp"
@@ -381,6 +381,18 @@
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_margin="10dp"
+            android:text="Keluar"
+            android:textColor="@android:color/holo_red_light"
+            android:drawableLeft="@drawable/ic_baseline_logout_24"
+            app:cornerRadius="50dp"
+            app:drawableTint="@android:color/holo_red_light"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
         <TextView
             android:layout_width="match_parent"
