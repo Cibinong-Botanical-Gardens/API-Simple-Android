@@ -9,8 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import id.mayaksa.simpel.databinding.FragmentAccountBinding;
+import id.mayaksa.simpel.model.rest.ApiFunction;
 import id.mayaksa.simpel.utils.Directs;
 import id.mayaksa.simpel.utils.Functions;
+import id.mayaksa.simpel.utils.SharedPreferences;
 
 public class AccountFragment extends Fragment {
 
@@ -32,6 +34,13 @@ public class AccountFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Directs.registerDirect(requireContext(),true);
+            }
+        });
+
+        binding.logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ApiFunction.LogoutRequest(requireContext(), SharedPreferences.loadToken(requireContext()));
             }
         });
     }
