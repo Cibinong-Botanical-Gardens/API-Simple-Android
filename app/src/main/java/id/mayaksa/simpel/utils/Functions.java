@@ -16,6 +16,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import id.mayaksa.simpel.R;
+import id.mayaksa.simpel.model.rest.ApiFunction;
 
 public class Functions {
 
@@ -102,7 +104,7 @@ public class Functions {
         }
     }
 
-    public static void dialogLoading(Context context, Boolean finish) {
+    public static void dialogLoadingLogin(Context context, String email, String pass, Boolean finish) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_loading);
@@ -113,7 +115,28 @@ public class Functions {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Directs.mainDirect(context,true);
+                ApiFunction.LoginRequest(context, email, pass);
+            }
+        }, 3000);
+
+        if(finish){
+            bottomSheetDialog.setCancelable(false);
+            bottomSheetDialog.setCanceledOnTouchOutside(false);
+        }
+    }
+
+    public static void dialogLoadingRegister(Context context, String firstName, String lastName,String email, String password, String phone, String role, Boolean finish) {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_loading);
+
+        bottomSheetDialog.show();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ApiFunction.RegisterRequest(context, firstName, lastName, email, password, phone, role);
             }
         }, 3000);
 
@@ -160,13 +183,29 @@ public class Functions {
         bottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_login);
 
+        EditText emailText = bottomSheetDialog.findViewById(R.id.email);
+        EditText passText = bottomSheetDialog.findViewById(R.id.password);
         Button login = bottomSheetDialog.findViewById(R.id.login);
 
         assert login != null;
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialogLoading(context, true);
+                assert emailText != null;
+                String email = emailText.getText().toString().trim();
+                assert passText != null;
+                String pass = passText.getText().toString().trim();
+
+                if (email.isEmpty() || pass.isEmpty()) {
+                    if (email.isEmpty()) {
+                        emailText.setError("Email tidak boleh kosong");
+                    }
+                    if (pass.isEmpty()) {
+                        passText.setError("Password tidak boleh kosong");
+                    }
+                }else{
+                    dialogLoadingLogin(context, email, pass, true);
+                }
             }
         });
 
@@ -177,6 +216,5 @@ public class Functions {
             bottomSheetDialog.setCanceledOnTouchOutside(false);
         }
     }
-
 
 }

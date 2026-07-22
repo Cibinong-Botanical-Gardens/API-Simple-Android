@@ -2,6 +2,7 @@ package id.mayaksa.simpel.ui.activity;
 
 import static androidx.core.content.ContentProviderCompat.requireContext;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import id.mayaksa.simpel.R;
 import id.mayaksa.simpel.databinding.ActivityMainBinding;
 import id.mayaksa.simpel.databinding.ActivityRegisterBinding;
+import id.mayaksa.simpel.model.rest.ApiFunction;
 import id.mayaksa.simpel.utils.Functions;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -37,7 +39,9 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initComponents(){
-        String[] items = {"User", "Mayaksa - User", "Mayaksa - Admin", "DPKI", "SuperAdmin"};
+        Context context = this;
+
+        String[] items = {"Mayaksa - User", "Mayaksa - Admin", "DPKI - User", "DPKI - Admin", "SuperAdmin"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.dropdown_item, items);
 
         binding.roleDropdown.setAdapter(adapter);
@@ -97,8 +101,12 @@ public class RegisterActivity extends AppCompatActivity {
                 if(binding.phone.getText().toString().trim().isEmpty()){
                     binding.phone.setError("Phone Number does not exist.");
                 }else{
-                    if(binding.phone.getText().toString().trim().charAt(0) == '0'){
-                        binding.phone.setText(binding.phone.getText().toString().trim().substring(1));
+                    if(binding.phone.getText().toString().trim().length() < 8) {
+                        binding.phone.setError("Phone number is too short.");
+                    }else{
+                        if(binding.phone.getText().toString().trim().charAt(0) == '0'){
+                            binding.phone.setText(binding.phone.getText().toString().trim().substring(1));
+                        }
                     }
                 }
             }
@@ -171,23 +179,51 @@ public class RegisterActivity extends AppCompatActivity {
         binding.register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(binding.firstName.getText().toString().trim().isEmpty()){
-                    binding.firstName.setError("Name does not exist.");
+                String firstName = binding.firstName.getText().toString().trim();
+                String lastName = binding.lastName.getText().toString().trim();
+                String role = binding.roleDropdown.getText().toString().trim();
+                String phone = binding.phone.getText().toString().trim();
+                String email = binding.email.getText().toString().trim();
+                String password = binding.password.getText().toString().trim();
+                String passwordConfirm = binding.passwordConfirm.getText().toString().trim();
+
+                if (role.equals("Mayaksa - User")){
+                    role = "m_user";
+                } else if(role.equals("Mayaksa - Admin")){
+                    role = "m_admin";
+                } else if (role.equals("DPKI - User")){
+                    role = "d_user";
+                } else if (role.equals("DPKI - Admin")){
+                    role = "d_admin";
+                } else if (role.equals("SuperAdmin")){
+                    role = "root";
                 }
-                if(binding.roleDropdown.getText().toString().trim().isEmpty()){
-                    binding.roleDropdown.setError("Role does not exist.");
-                }
-                if(binding.phone.getText().toString().trim().isEmpty()){
-                    binding.phone.setError("Phone Number does not exist.");
-                }
-                if(binding.email.getText().toString().trim().isEmpty()){
-                    binding.email.setError("Email does not exist.");
-                }
-                if(binding.password.getText().toString().trim().isEmpty()){
-                    binding.password.setError("Password does not exist.");
-                }
-                if(binding.passwordConfirm.getText().toString().trim().isEmpty()){
-                    binding.passwordConfirm.setError("Password does not exist.");
+
+                if(firstName.isEmpty() || lastName.isEmpty() || role.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
+                    if (firstName.isEmpty()) {
+                        binding.firstName.setError("Name does not exist.");
+                    }
+                    if(binding.roleDropdown.getText().toString().trim().isEmpty()){
+                        binding.roleDropdown.setError("Role does not exist.");
+                    }
+                    if(binding.phone.getText().toString().trim().isEmpty()){
+                        binding.phone.setError("Phone Number does not exist.");
+                    }
+                    if(binding.email.getText().toString().trim().isEmpty()){
+                        binding.email.setError("Email does not exist.");
+                    }else{
+                        if(!Functions.isValidEmail(binding.email.getText().toString().trim())){
+                            binding.email.setError("Invalid email.");
+                        }
+                    }
+                    if(binding.password.getText().toString().trim().isEmpty()){
+                        binding.password.setError("Password does not exist.");
+                    }
+                    if(binding.passwordConfirm.getText().toString().trim().isEmpty()){
+                        binding.passwordConfirm.setError("Password does not exist.");
+                    }
+                }else{
+                    Functions.dialogLoadingRegister(context, firstName, lastName, email, password, phone, role, true);
                 }
 
             }
