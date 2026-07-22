@@ -9,11 +9,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import id.mayaksa.simpel.model.User;
 import id.mayaksa.simpel.model.rest.response.AuthResponse;
+import id.mayaksa.simpel.model.rest.response.LaporanResponse;
 import id.mayaksa.simpel.utils.Directs;
 import id.mayaksa.simpel.utils.SharedPreferences;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +39,6 @@ public class ApiFunction {
 
                         User user = result.getData().getUser();
 
-//                        SharedPreferences.saveToken(context, token);
                         SharedPreferences.saveUser(context, token, user);
 
                         Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
@@ -57,7 +60,7 @@ public class ApiFunction {
         });
     }
 
-    public static void RegisterRequest(Context context, String firstName, String lastName,String email, String password, String phone, String role) {
+    public static void RegisterRequest(Context context, String firstName, String lastName, String email, String password, String phone, String role) {
         Call<AuthResponse> call = ApiClient.getApiService().registerRequest(firstName, lastName, email, password, phone, role);
         call.enqueue(new Callback<AuthResponse>() {
             @Override
@@ -91,11 +94,7 @@ public class ApiFunction {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i("Response", response.toString());
-                Log.i("Token", SharedPreferences.loadToken(context));
                 if (response.isSuccessful() && response.body() != null) {
-                    ResponseBody result = response.body();
-
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")) {
@@ -110,13 +109,58 @@ public class ApiFunction {
                         e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText((Activity) context, "Login gagal, coba lagi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText((Activity) context, "Gagal logout", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText((Activity) context, "Gagal terhubung ke server: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void CreateLaporanRequest(Context context, String token, RequestBody jenisLaporan, RequestBody judul, RequestBody deskripsi, RequestBody prioritas, RequestBody latitude, RequestBody longitude, RequestBody isKoleksi, MultipartBody.Part fotoBefore) {
+        Call<LaporanResponse> call = ApiClient.getApiService().createLaporanRequest("Bearer " + token, jenisLaporan, judul, deskripsi, prioritas, latitude, longitude, isKoleksi, fotoBefore);
+        call.enqueue(new Callback<LaporanResponse>() {
+            @Override
+            public void onResponse(Call<LaporanResponse> call, Response<LaporanResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LaporanResponse result = response.body();
+                    if (result.isSuccess()) {
+                        Toast.makeText(context, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        ((Activity) context).finish();
+                    } else {
+                        Toast.makeText(context, "Gagal: " + result.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else if (response.code() == 422) {
+                    try {
+                        String errorBody = response.errorBody().string();
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        StringBuilder message = new StringBuilder();
+                        if (jsonObject.has("message")) {
+                            message.append(jsonObject.getString("message")).append("\n");
+                        }
+                        if (jsonObject.has("errors")) {
+                            JSONObject errors = jsonObject.getJSONObject("errors");
+                            Iterator<String> keys = errors.keys();
+                            while (keys.hasNext()) {
+                                String key = keys.next();
+                                message.append("- ").append(errors.getJSONArray(key).get(0)).append("\n");
+                            }
+                        }
+                        Toast.makeText(context, message.toString(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Gagal Validasi: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(context, "Gagal mengirim laporan: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LaporanResponse> call, Throwable t) {
+                Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
