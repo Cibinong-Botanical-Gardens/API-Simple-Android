@@ -1,40 +1,39 @@
-//package id.mayaksa.simpel.rest.m_user;
-//
-////import com.humic.android.homecare.rest.user.response.HistoryResponse;
-////import com.humic.android.homecare.rest.user.response.ServiceResponse;
-//
-//import okhttp3.RequestBody;
-//import okhttp3.ResponseBody;
-//import retrofit2.Call;
-//import retrofit2.http.Body;
-//import retrofit2.http.Field;
-//import retrofit2.http.FormUrlEncoded;
-//import retrofit2.http.GET;
-//import retrofit2.http.Header;
-//import retrofit2.http.POST;
-//import retrofit2.http.PUT;
-//import retrofit2.http.Path;
-//import retrofit2.http.Query;
-//
-//public interface ApiInterface {
-//
-//    //Authentication
-//    @FormUrlEncoded
-//    @POST("auth/login")
-//    Call<ResponseBody> loginUserRequest(@Field("username") String username,
-//                                        @Field("password") String password);
-//
-//    @FormUrlEncoded
-//    @POST("auth/register")
-//    Call<ResponseBody> registerUserRequest(@Field("username") String username,
-//                                           @Field("password") String password,
-//                                           @Field("name") String name,
-//                                           @Field("birth_date") String birth_date,
-//                                           @Field("address") String address,
-//                                           @Field("nik") String nik,
-//                                           @Field("gender") String gender,
-//                                           @Field("age") String age);
-//
+package id.mayaksa.simpel.model.rest;
+
+import id.mayaksa.simpel.model.rest.response.AuthResponse;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+
+public interface ApiInterface {
+
+    //Authentication
+    @FormUrlEncoded
+    @POST("auth/login")
+    Call<AuthResponse> loginRequest(@Field("email") String email,
+                                    @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("auth/register")
+    Call<AuthResponse> registerRequest(@Field("first_name") String firstName,
+                                       @Field("last_name") String lastName,
+                                       @Field("email") String email,
+                                       @Field("password") String password,
+                                       @Field("no_tlp") String phone,
+                                       @Field("role") String role);
+
+    @POST("auth/logout")
+    Call<ResponseBody> logoutRequest(@Header("Authorization") String token);
+
 //    @POST("auth/me")
 //    Call<ResponseBody> currentUserRequest(@Header("Authorization") String token);
 //
@@ -42,8 +41,6 @@
 //    @POST("auth/forget-password")
 //    Call<ResponseBody> forgetPasswordUserRequest(@Field("email") String email);
 //
-//    @POST("auth/logout")
-//    Call<ResponseBody> logoutUserRequest(@Header("Authorization") String token);
 //
 //    @FormUrlEncoded
 //    @PUT("auth/me/update-profile")
@@ -104,5 +101,5 @@
 //                                                @Query("longitude") Double longitude,
 //                                                @Query("radius") String radius,
 //                                                @Query("gender") String gender);
-//
-//}
+
+}
