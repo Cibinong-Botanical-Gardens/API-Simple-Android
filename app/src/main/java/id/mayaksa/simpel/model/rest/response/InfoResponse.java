@@ -3,7 +3,7 @@ package id.mayaksa.simpel.model.rest.response;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
-public class LaporanResponse {
+public class InfoResponse {
     @SerializedName("success")
     private boolean success;
 
@@ -19,27 +19,23 @@ public class LaporanResponse {
 
     public static class DataWrapper {
         @SerializedName("data")
-        private List<LaporanItem> items;
+        private List<InfoItem> items;
 
-        public List<LaporanItem> getItems() { return items; }
+        public List<InfoItem> getItems() { return items; }
     }
 
-    public static class LaporanItem {
-        @SerializedName("id_laporan")
-        private int idLaporan;
-
+    public static class InfoItem {
         @SerializedName("judul")
         private String judul;
 
         @SerializedName("deskripsi")
         private String deskripsi;
 
-        @SerializedName("foto_before")
-        private String fotoBefore;
+        @SerializedName("gambar_url")
+        private String gambarUrl;
 
-        public int getIdLaporan() { return idLaporan; }
         public String getJudul() { return judul; }
         public String getDeskripsi() { return deskripsi; }
-        public String getFotoBefore() { return fotoBefore; }
+        public String getGambarUrl() { return gambarUrl; }
     }
 }

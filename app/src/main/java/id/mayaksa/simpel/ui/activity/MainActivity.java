@@ -46,8 +46,10 @@ import java.util.concurrent.Executors;
 
 import id.mayaksa.simpel.R;
 import id.mayaksa.simpel.databinding.ActivityMainBinding;
+import id.mayaksa.simpel.model.rest.ApiFunction;
 import id.mayaksa.simpel.utils.Directs;
 import id.mayaksa.simpel.utils.Functions;
+import id.mayaksa.simpel.utils.SharedPreferences;
 
 public class MainActivity extends AppCompatActivity {
 

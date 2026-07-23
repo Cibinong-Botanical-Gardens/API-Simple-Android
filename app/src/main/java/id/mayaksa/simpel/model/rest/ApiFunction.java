@@ -2,18 +2,20 @@ package id.mayaksa.simpel.model.rest;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import id.mayaksa.simpel.model.Report;
 import id.mayaksa.simpel.model.User;
 import id.mayaksa.simpel.model.rest.response.AuthResponse;
+import id.mayaksa.simpel.model.rest.response.InfoResponse;
 import id.mayaksa.simpel.model.rest.response.LaporanResponse;
+import id.mayaksa.simpel.model.rest.response.LogbookResponse;
 import id.mayaksa.simpel.utils.Directs;
 import id.mayaksa.simpel.utils.SharedPreferences;
 import okhttp3.MultipartBody;
@@ -25,25 +27,23 @@ import retrofit2.Response;
 
 public class ApiFunction {
 
+    public interface ApiCallback<T> {
+        void onSuccess(T data);
+        void onFailure(String message);
+    }
+
     public static void LoginRequest(Context context, String email, String password) {
         Call<AuthResponse> call = ApiClient.getApiService().loginRequest(email, password);
         call.enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse result = response.body();
-
                     if (result.isSuccess()) {
                         String token = result.getData().getToken();
-
                         User user = result.getData().getUser();
-
                         SharedPreferences.saveUser(context, token, user);
-
                         Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
-                        Toast.makeText((Activity) context, "Login berhasil", Toast.LENGTH_SHORT).show();
-
                         Directs.mainDirect(context, true);
                     } else {
                         Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
@@ -52,7 +52,6 @@ public class ApiFunction {
                     Toast.makeText((Activity) context, "Login gagal, coba lagi", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
                 Toast.makeText((Activity) context, "Gagal terhubung ke server: " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -65,56 +64,20 @@ public class ApiFunction {
         call.enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse result = response.body();
-
                     if (result.isSuccess()) {
-                        Directs.onBoardingDirect(context, true);
-
                         Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
-                        Toast.makeText((Activity) context, "Login berhasil", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText((Activity) context, "Login gagal, coba lagi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText((Activity) context, "Registrasi gagal, coba lagi", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                Toast.makeText((Activity) context, "Gagal terhubung ke server: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public static void LogoutRequest(Context context, String token) {
-        Call<ResponseBody> call = ApiClient.getApiService().logoutRequest("Bearer " + token);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    try {
-                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                        if (jsonRESULTS.getString("success").equals("true")) {
-                            Toast.makeText((Activity) context, "Anda Keluar", Toast.LENGTH_SHORT).show();
-                            Directs.splashDirect(context, true);
-                            SharedPreferences.clearUser(context);
-                        } else {
-                            String error_message = jsonRESULTS.getString("error_msg");
-                            Toast.makeText((Activity) context, error_message, Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException | IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Toast.makeText((Activity) context, "Gagal logout", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText((Activity) context, "Gagal terhubung ke server: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -157,11 +120,71 @@ public class ApiFunction {
                     Toast.makeText(context, "Gagal mengirim laporan: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(Call<LaporanResponse> call, Throwable t) {
                 Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        });
+    }
+
+    public static void LogoutRequest(Context context, String token) {
+        ApiClient.getApiService().logoutRequest("Bearer " + token).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    SharedPreferences.clearUser(context);
+                    Directs.splashDirect(context, true);
+                }
+            }
+            @Override public void onFailure(Call<ResponseBody> call, Throwable t) {}
+        });
+    }
+
+    public static ArrayList<Report> GetLaporanRequest(Context context, String token) {
+        ApiClient.getApiService().getLaporanRequest("Bearer " + token).enqueue(new Callback<LaporanResponse>() {
+            @Override
+            public void onResponse(Call<LaporanResponse> call, Response<LaporanResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LaporanResponse result = response.body();
+                    if (result.isSuccess()) {
+
+                        Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText((Activity) context, "Registrasi gagal, coba lagi", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LaporanResponse> call, Throwable t) {
+                Toast.makeText((Activity) context, "Gagal terhubung ke server: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void GetLogbookRequest(String token, ApiCallback<List<LogbookResponse.LogbookItem>> callback) {
+        ApiClient.getApiService().getLogbookRequest("Bearer " + token).enqueue(new Callback<LogbookResponse>() {
+            @Override
+            public void onResponse(Call<LogbookResponse> call, Response<LogbookResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    callback.onSuccess(response.body().getData().getItems());
+                } else { callback.onFailure("Gagal ambil logbook"); }
+            }
+            @Override public void onFailure(Call<LogbookResponse> call, Throwable t) { callback.onFailure(t.getMessage()); }
+        });
+    }
+
+    public static void GetArtikelRequest(String token, ApiCallback<List<InfoResponse.InfoItem>> callback) {
+        ApiClient.getApiService().getArtikelRequest("Bearer " + token).enqueue(new Callback<InfoResponse>() {
+            @Override
+            public void onResponse(Call<InfoResponse> call, Response<InfoResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    callback.onSuccess(response.body().getData().getItems());
+                } else { callback.onFailure("Gagal ambil artikel"); }
+            }
+            @Override public void onFailure(Call<InfoResponse> call, Throwable t) { callback.onFailure(t.getMessage()); }
         });
     }
 }

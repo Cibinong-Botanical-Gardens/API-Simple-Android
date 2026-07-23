@@ -4,50 +4,51 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import id.mayaksa.simpel.adapter.RecyclerViewReportAdapter;
+import id.mayaksa.simpel.adapter.LogbookAdapter;
 import id.mayaksa.simpel.databinding.FragmentHistoryBinding;
-import id.mayaksa.simpel.model.Report;
+import id.mayaksa.simpel.model.rest.ApiFunction;
+import id.mayaksa.simpel.model.rest.response.LogbookResponse;
+import id.mayaksa.simpel.utils.SharedPreferences;
 
 public class HistoryFragment extends Fragment {
 
     private FragmentHistoryBinding binding;
 
-    private ArrayList<Report> report;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
         binding = FragmentHistoryBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        initComponents();
-
-        return root;
+        
+        loadLogbook();
+        
+        return binding.getRoot();
     }
 
-    void initComponents(){
-        loadReport();
+    private void loadLogbook() {
+        String token = SharedPreferences.loadToken(requireContext());
+        ApiFunction.GetLogbookRequest(token, new ApiFunction.ApiCallback<List<LogbookResponse.LogbookItem>>() {
+            @Override
+            public void onSuccess(List<LogbookResponse.LogbookItem> data) {
+                if (getActivity() == null) return;
+                LogbookAdapter adapter = new LogbookAdapter(getActivity(), data);
+                binding.report.setLayoutManager(new LinearLayoutManager(getActivity()));
+                binding.report.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void loadReport(){
-        report = new ArrayList<>();
-
-        report.add(new Report("2j",0,"Sumatra knp Pak Bayu?", "Lapor Pak, Ada pohon tumbang di area sumatera", "-6.489797", "106.854330",0,"Sopyan", "DPKI", "admin"));
-        report.add(new Report("2j",0,"Loch kan ambruk", "Buat Mayaksa, Kalimantannya coba dibenahi dengan tim.", "-6.490910", "106.856221",0,"Sopyan", "DPKI", "admin"));
-        report.add(new Report("2j",0,"Apa tuch?", "Aduh, gatau ini dimana, banyak asset hancur", "-6.489216", "106.856346", 0,"Sopyan", "DPKI", "admin"));
-
-        final RecyclerViewReportAdapter summaries = new RecyclerViewReportAdapter(getActivity(), report);
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        binding.report.setLayoutManager(linearLayoutManager);
-        binding.report.setAdapter(summaries);
-    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

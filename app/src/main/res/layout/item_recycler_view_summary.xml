@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="250dp"
     android:layout_height="245dp"
     android:layout_margin="5dp"
@@ -54,7 +55,8 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:ellipsize="end"
-            android:maxLines="2"/>
+            android:maxLines="2"
+            tools:text="Judul Laporan"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,7 +101,8 @@
                         android:textStyle="bold"
                         android:singleLine="true"
                         android:ellipsize="end"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp"
+                        tools:text="Nama User"/>
 
                     <FrameLayout
                         android:id="@+id/icon_badge"
@@ -131,7 +134,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:textSize="13sp"
-                    android:alpha="0.5"/>
+                    android:alpha="0.5"
+                    tools:text="Institusi"/>
 
             </LinearLayout>
 

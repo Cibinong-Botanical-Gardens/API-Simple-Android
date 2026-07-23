@@ -58,4 +58,8 @@ dependencies {
     // Opsional (Converter & Interceptor)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging.interceptor)
+
+    // Glide
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
 }
