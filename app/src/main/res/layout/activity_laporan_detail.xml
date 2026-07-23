@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- AppBar — mengikuti pola activity_report.xml yang sudah ada -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.Simpel.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Detail Laporan"
+            app:popupTheme="@style/Theme.Simpel.PopupOverlay"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Konten utama -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Card: Form Edit Info Laporan -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header: Label & Status Badge -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Informasi Laporan"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+
+                        <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
+
+                        <TextView
+                            android:id="@+id/tv_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="Pending"/>
+
+                    </LinearLayout>
+
+                    <!-- Dropdown Jenis Laporan / Kategori -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layout_jenis"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:hint="Jenis Laporan / Kategori">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/dropdown_jenis"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Judul Laporan (Editable) -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layout_judul"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:hint="Judul Laporan *">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_judul"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapSentences|textAutoCorrect" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Deskripsi Laporan (Editable, multiline) -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layout_deskripsi"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:hint="Deskripsi Laporan *">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_deskripsi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minLines="3"
+                            android:gravity="top|start"
+                            android:inputType="textMultiLine" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Dropdown Prioritas -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layout_prioritas"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:hint="Prioritas">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/dropdown_prioritas"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="?android:attr/listDivider"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Tanggal (Read-only) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Tanggal"
+                            android:textSize="13sp"
+                            android:alpha="0.6"/>
+
+                        <TextView
+                            android:id="@+id/tv_tanggal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            tools:text="23 Jul 2026"/>
+                    </LinearLayout>
+
+                    <!-- Pelapor (Read-only) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Pelapor"
+                            android:textSize="13sp"
+                            android:alpha="0.6"/>
+
+                        <TextView
+                            android:id="@+id/tv_nama_user"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            tools:text="Budi Santoso"/>
+                    </LinearLayout>
+
+                    <!-- Lokasi (Read-only) -->
+                    <LinearLayout
+                        android:id="@+id/layout_lokasi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="6dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Lokasi (Lat, Lon)"
+                            android:textSize="13sp"
+                            android:alpha="0.6"/>
+
+                        <TextView
+                            android:id="@+id/tv_lokasi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            tools:text="-6.595, 106.801"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card: Foto Laporan (hidden by default, tampil jika ada foto_before) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_foto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Foto Laporan"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:alpha="0.6"
+                        android:layout_marginBottom="8dp"/>
+
+                    <ImageView
+                        android:id="@+id/img_foto_before"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        app:srcCompat="@drawable/img_avatar"
+                        tools:ignore="ContentDescription"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card: Update Status — hanya tampil untuk role admin/root -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_update_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Update Status Laporan"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pilih status baru:"
+                        android:textSize="13sp"
+                        android:alpha="0.6"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- ChipGroup untuk pemilihan status -->
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_pending"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pending"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:checkable="true"/>
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_diproses"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Diproses"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:checkable="true"/>
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_selesai"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Selesai"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:checkable="true"/>
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_ditolak"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ditolak"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:checkable="true"/>
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <!-- TODO: Jika backend butuh "catatan_admin", tambahkan TextInputLayout di sini -->
+
+                    <!-- ProgressBar loading update -->
+                    <ProgressBar
+                        android:id="@+id/progress_bar_update"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone"/>
+
+                    <!-- Tombol Update -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_update_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Simpan Perubahan"
+                        android:textAllCaps="false"
+                        app:cornerRadius="8dp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

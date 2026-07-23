@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import id.mayaksa.simpel.R;
@@ -21,11 +22,21 @@ import id.mayaksa.simpel.model.rest.response.LaporanResponse;
 public class RecyclerViewSummaryAdapter extends RecyclerView.Adapter<RecyclerViewSummaryAdapter.ViewHolder> {
 
     private final Context context;
-    private final List<LaporanResponse.LaporanItem> itemData;
+    private final List<LaporanResponse.LaporanItem> itemData = new ArrayList<>();
 
     public RecyclerViewSummaryAdapter(Context context, List<LaporanResponse.LaporanItem> itemData) {
         this.context = context;
-        this.itemData = itemData;
+        if (itemData != null) {
+            this.itemData.addAll(itemData);
+        }
+    }
+
+    public void setData(List<LaporanResponse.LaporanItem> newData) {
+        this.itemData.clear();
+        if (newData != null) {
+            this.itemData.addAll(newData);
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull

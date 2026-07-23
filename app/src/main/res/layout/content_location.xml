@@ -100,7 +100,40 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/report"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:nestedScrollingEnabled="false"/>
+
+        <!-- Loading indikator utama (saat pertama kali load) -->
+        <ProgressBar
+            android:id="@+id/progress_bar_laporan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"/>
+
+        <!-- Empty state -->
+        <TextView
+            android:id="@+id/tv_empty_laporan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="Belum ada laporan"
+            android:textSize="14sp"
+            android:alpha="0.6"
+            android:visibility="gone"/>
+
+        <!-- Loading indikator footer (saat load halaman berikutnya) -->
+        <ProgressBar
+            android:id="@+id/progress_bar_load_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

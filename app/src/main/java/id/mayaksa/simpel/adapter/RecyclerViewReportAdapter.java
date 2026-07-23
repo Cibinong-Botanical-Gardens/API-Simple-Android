@@ -45,7 +45,10 @@ public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // This will set the images in imageview
-        holder.image.setImageResource(itemData.get(position).getImage());
+        int imageRes = itemData.get(position).getImageRes();
+        if (imageRes != 0) {
+            holder.image.setImageResource(imageRes);
+        }
         holder.title.setText(itemData.get(position).getTitle());
 //        holder.abstr.setText(itemData.get(position).getAbstr());
 //        holder.text.setText(itemData.get(position).getText());
@@ -54,8 +57,9 @@ public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerView
         holder.latitude.setText(itemData.get(position).getLatitude());
         holder.longitude.setText(itemData.get(position).getLongitude());
 
-        if(itemData.get(position).getProfile_image() != 0){
-            holder.profileImage.setImageResource(itemData.get(position).getProfile_image());
+        int profileImageRes = itemData.get(position).getProfileImageRes();
+        if (profileImageRes != 0) {
+            holder.profileImage.setImageResource(profileImageRes);
         }
 
         if(itemData.get(position).getRole().equals("admin")){

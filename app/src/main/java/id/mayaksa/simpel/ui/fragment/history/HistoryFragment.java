@@ -4,24 +4,35 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import java.util.List;
+import com.google.android.material.tabs.TabLayoutMediator;
 
-import id.mayaksa.simpel.adapter.LogbookAdapter;
 import id.mayaksa.simpel.databinding.FragmentHistoryBinding;
-import id.mayaksa.simpel.model.rest.ApiFunction;
-import id.mayaksa.simpel.model.rest.response.LogbookResponse;
-import id.mayaksa.simpel.utils.SharedPreferences;
 
 public class HistoryFragment extends Fragment {
 
     private FragmentHistoryBinding binding;
+
+    private static final String[] TAB_TITLES = new String[]{
+            "All",
+            "Pending",
+            "Diproses",
+            "Selesai",
+            "Ditolak"
+    };
+
+    private static final String[] TAB_STATUS_VALUES = new String[]{
+            null,         // All (no status query)
+            "pending",
+            "diproses",
+            "selesai",
+            "ditolak"
+    };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -33,57 +44,39 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadLogbook();
-    }
 
-    private void loadLogbook() {
-        if (binding == null) return;
+        // Setup ViewPager2 Adapter
+        HistoryPagerAdapter pagerAdapter = new HistoryPagerAdapter(this);
+        binding.viewPager.setAdapter(pagerAdapter);
 
-        // Indikator Loading: tampilkan ProgressBar, sembunyikan empty state & list
-        binding.progressBarLogbook.setVisibility(View.VISIBLE);
-        binding.tvEmptyLogbook.setVisibility(View.GONE);
-        binding.report.setVisibility(View.GONE);
-
-        String token = SharedPreferences.loadToken(requireContext());
-        ApiFunction.GetLogbookRequest(token, new ApiFunction.ApiCallback<List<LogbookResponse.LogbookItem>>() {
-            @Override
-            public void onSuccess(List<LogbookResponse.LogbookItem> data) {
-                if (getActivity() == null || binding == null) return;
-
-                // Sembunyikan ProgressBar saat data selesai diambil
-                binding.progressBarLogbook.setVisibility(View.GONE);
-
-                // Cek empty state
-                if (data == null || data.isEmpty()) {
-                    binding.tvEmptyLogbook.setVisibility(View.VISIBLE);
-                    binding.report.setVisibility(View.GONE);
-                } else {
-                    binding.tvEmptyLogbook.setVisibility(View.GONE);
-                    binding.report.setVisibility(View.VISIBLE);
-
-                    LogbookAdapter adapter = new LogbookAdapter(requireContext(), data);
-                    binding.report.setLayoutManager(new LinearLayoutManager(requireContext()));
-                    binding.report.setAdapter(adapter);
-                }
-            }
-
-            @Override
-            public void onFailure(String message) {
-                if (getActivity() == null || binding == null) return;
-
-                binding.progressBarLogbook.setVisibility(View.GONE);
-                binding.tvEmptyLogbook.setText("Gagal memuat data logbook");
-                binding.tvEmptyLogbook.setVisibility(View.VISIBLE);
-                binding.report.setVisibility(View.GONE);
-
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Attach TabLayout with ViewPager2
+        new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> {
+            tab.setText(TAB_TITLES[position]);
+        }).attach();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private static class HistoryPagerAdapter extends FragmentStateAdapter {
+
+        public HistoryPagerAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            String status = TAB_STATUS_VALUES[position];
+            return LaporanTabFragment.newInstance(status);
+        }
+
+        @Override
+        public int getItemCount() {
+            return TAB_TITLES.length;
+        }
     }
 }

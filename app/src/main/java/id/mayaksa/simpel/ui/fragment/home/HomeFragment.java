@@ -24,6 +24,7 @@ import id.mayaksa.simpel.utils.SharedPreferences;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private RecyclerViewSummaryAdapter summaryAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -43,6 +44,12 @@ public class HomeFragment extends Fragment {
         });
 
         loadInfo();
+        loadSummary();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         loadSummary();
     }
 
@@ -119,9 +126,13 @@ public class HomeFragment extends Fragment {
                     binding.tvEmptyLaporan.setVisibility(View.GONE);
                     binding.pagerViewSummary.setVisibility(View.VISIBLE);
 
-                    RecyclerViewSummaryAdapter adapter = new RecyclerViewSummaryAdapter(requireContext(), data);
-                    binding.pagerViewSummary.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-                    binding.pagerViewSummary.setAdapter(adapter);
+                    if (summaryAdapter == null) {
+                        summaryAdapter = new RecyclerViewSummaryAdapter(requireContext(), data);
+                        binding.pagerViewSummary.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+                        binding.pagerViewSummary.setAdapter(summaryAdapter);
+                    } else {
+                        summaryAdapter.setData(data);
+                    }
                 }
             }
 
@@ -147,5 +158,7 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        // Reset adapter agar onViewCreated berikutnya selalu attach adapter baru ke RecyclerView baru
+        summaryAdapter = null;
     }
 }

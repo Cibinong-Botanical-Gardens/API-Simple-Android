@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import id.mayaksa.simpel.R;
@@ -16,12 +17,41 @@ import id.mayaksa.simpel.model.rest.response.LaporanResponse;
 
 public class LaporanAdapter extends RecyclerView.Adapter<LaporanAdapter.ViewHolder> {
 
+    /** Listener untuk event klik item laporan. */
+    public interface OnItemClickListener {
+        void onItemClick(LaporanResponse.LaporanItem item);
+    }
+
     private final Context context;
-    private final List<LaporanResponse.LaporanItem> items;
+    private final List<LaporanResponse.LaporanItem> items = new ArrayList<>();
+    private OnItemClickListener onItemClickListener;
 
     public LaporanAdapter(Context context, List<LaporanResponse.LaporanItem> items) {
         this.context = context;
-        this.items = items;
+        if (items != null) {
+            this.items.addAll(items);
+        }
+    }
+
+    public void setData(List<LaporanResponse.LaporanItem> newItems) {
+        this.items.clear();
+        if (newItems != null) {
+            this.items.addAll(newItems);
+        }
+        notifyDataSetChanged();
+    }
+
+    /** Set listener untuk event klik pada item. */
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+    /** Append data baru ke bawah list yang sudah ada (dipakai untuk infinite scroll). */
+    public void addData(List<LaporanResponse.LaporanItem> newItems) {
+        if (newItems == null || newItems.isEmpty()) return;
+        int startPosition = this.items.size();
+        this.items.addAll(newItems);
+        notifyItemRangeInserted(startPosition, newItems.size());
     }
 
     @NonNull
@@ -58,6 +88,13 @@ public class LaporanAdapter extends RecyclerView.Adapter<LaporanAdapter.ViewHold
 
         String tanggal = item.getTanggal() != null ? item.getTanggal() : item.getCreatedAt();
         holder.tvTanggal.setText(tanggal != null ? tanggal : "");
+
+        // Klik item → buka detail
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(item);
+            }
+        });
     }
 
     @Override

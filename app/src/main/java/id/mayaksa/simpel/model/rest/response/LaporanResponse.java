@@ -45,7 +45,7 @@ public class LaporanResponse {
         public int getTotal() { return total; }
     }
 
-    public static class LaporanItem {
+    public static class LaporanItem implements java.io.Serializable {
         @SerializedName("id_laporan")
         private int idLaporan;
 
@@ -62,10 +62,10 @@ public class LaporanResponse {
         private String jenisLaporan;
 
         @SerializedName("prioritas")
-        private String prioritas;
+        private Object prioritas;
 
         @SerializedName("status")
-        private String status;
+        private StatusItem statusObject;
 
         @SerializedName("foto_before")
         private String fotoBefore;
@@ -102,8 +102,23 @@ public class LaporanResponse {
         public String getJudul() { return judul; }
         public String getDeskripsi() { return deskripsi; }
         public String getJenisLaporan() { return jenisLaporan; }
-        public String getPrioritas() { return prioritas; }
-        public String getStatus() { return status; }
+        
+        public String getPrioritas() {
+            if (prioritas == null) return null;
+            if (prioritas instanceof Double) {
+                return String.valueOf(((Double) prioritas).intValue());
+            }
+            return String.valueOf(prioritas);
+        }
+
+        public String getStatus() {
+            if (statusObject != null && statusObject.getNamaStatus() != null) {
+                return statusObject.getNamaStatus();
+            }
+            return "Pending";
+        }
+
+        public StatusItem getStatusObject() { return statusObject; }
         public String getFotoBefore() { return fotoBefore; }
         public String getFotoAfter() { return fotoAfter; }
         public String getLatitude() { return latitude; }
@@ -116,7 +131,22 @@ public class LaporanResponse {
         public UserItem getUser() { return user; }
     }
 
-    public static class UserItem {
+    public static class StatusItem implements java.io.Serializable {
+        @SerializedName("id_status")
+        private int idStatus;
+
+        @SerializedName("nama_status")
+        private String namaStatus;
+
+        @SerializedName("warna_hex")
+        private String warnaHex;
+
+        public int getIdStatus() { return idStatus; }
+        public String getNamaStatus() { return namaStatus; }
+        public String getWarnaHex() { return warnaHex; }
+    }
+
+    public static class UserItem implements java.io.Serializable {
         @SerializedName("id_user")
         private int idUser;
 

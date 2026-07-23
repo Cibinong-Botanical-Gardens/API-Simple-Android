@@ -1,13 +1,16 @@
 package id.mayaksa.simpel.model.rest;
 
+import id.mayaksa.simpel.model.rest.request.UpdateLaporanRequest;
 import id.mayaksa.simpel.model.rest.response.AuthResponse;
 import id.mayaksa.simpel.model.rest.response.InfoResponse;
 import id.mayaksa.simpel.model.rest.response.LaporanResponse;
 import id.mayaksa.simpel.model.rest.response.LogbookResponse;
+import id.mayaksa.simpel.model.rest.response.UpdateLaporanResponse;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -15,6 +18,8 @@ import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiInterface {
 
@@ -49,8 +54,32 @@ public interface ApiInterface {
             @Part MultipartBody.Part fotoBefore
     );
 
+    @FormUrlEncoded
+    @POST("laporan/{id}")
+    Call<UpdateLaporanResponse> updateLaporan(
+            @Header("Authorization") String token,
+            @Path("id") int id,
+            @Field("status") String status,
+            @Field("judul") String judul,
+            @Field("deskripsi") String deskripsi,
+            @Field("jenis_laporan") String jenisLaporan,
+            @Field("prioritas") String prioritas,
+            @Field("latitude") String latitude,
+            @Field("longitude") String longitude,
+            @Field("is_koleksi") String isKoleksi
+    );
+
     @GET("laporan")
     Call<LaporanResponse> getLaporanRequest(@Header("Authorization") String token);
+
+    @GET("laporan")
+    Call<LaporanResponse> getLaporanPagedRequest(@Header("Authorization") String token,
+                                                 @Query("page") int page);
+
+    @GET("laporan")
+    Call<LaporanResponse> getLaporanFilteredRequest(@Header("Authorization") String token,
+                                                     @Query("status") String status,
+                                                     @Query("page") Integer page);
 
     @GET("logbook")
     Call<LogbookResponse> getLogbookRequest(@Header("Authorization") String token);
