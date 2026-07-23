@@ -140,51 +140,87 @@ public class ApiFunction {
         });
     }
 
-    public static ArrayList<Report> GetLaporanRequest(Context context, String token) {
+    /**
+     * GET /api/v1/laporan — mengambil daftar laporan dengan callback pattern.
+     * Mengembalikan list kosong (bukan null) jika data API kosong.
+     */
+    public static void GetLaporanRequest(String token, ApiCallback<List<LaporanResponse.LaporanItem>> callback) {
         ApiClient.getApiService().getLaporanRequest("Bearer " + token).enqueue(new Callback<LaporanResponse>() {
             @Override
             public void onResponse(Call<LaporanResponse> call, Response<LaporanResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     LaporanResponse result = response.body();
-                    if (result.isSuccess()) {
-
-                        Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (result.isSuccess() && result.getData() != null) {
+                        List<LaporanResponse.LaporanItem> items = result.getData().getItems();
+                        // Kirim list kosong jika null (API belum ada data)
+                        callback.onSuccess(items != null ? items : new ArrayList<>());
                     } else {
-                        Toast.makeText((Activity) context, result.getMessage(), Toast.LENGTH_SHORT).show();
+                        callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil laporan");
                     }
                 } else {
-                    Toast.makeText((Activity) context, "Registrasi gagal, coba lagi", Toast.LENGTH_SHORT).show();
+                    callback.onFailure("Gagal terhubung ke server (kode: " + response.code() + ")");
                 }
             }
-
             @Override
             public void onFailure(Call<LaporanResponse> call, Throwable t) {
-                Toast.makeText((Activity) context, "Gagal terhubung ke server: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
             }
         });
     }
 
+    /**
+     * GET /api/v1/logbook — mengambil daftar logbook dengan callback pattern.
+     * Mengembalikan list kosong (bukan null) jika data API kosong.
+     */
     public static void GetLogbookRequest(String token, ApiCallback<List<LogbookResponse.LogbookItem>> callback) {
         ApiClient.getApiService().getLogbookRequest("Bearer " + token).enqueue(new Callback<LogbookResponse>() {
             @Override
             public void onResponse(Call<LogbookResponse> call, Response<LogbookResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    callback.onSuccess(response.body().getData().getItems());
-                } else { callback.onFailure("Gagal ambil logbook"); }
+                if (response.isSuccessful() && response.body() != null) {
+                    LogbookResponse result = response.body();
+                    if (result.isSuccess() && result.getData() != null) {
+                        List<LogbookResponse.LogbookItem> items = result.getData().getItems();
+                        // Kirim list kosong jika null (API belum ada data)
+                        callback.onSuccess(items != null ? items : new ArrayList<>());
+                    } else {
+                        callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil logbook");
+                    }
+                } else {
+                    callback.onFailure("Gagal terhubung ke server (kode: " + response.code() + ")");
+                }
             }
-            @Override public void onFailure(Call<LogbookResponse> call, Throwable t) { callback.onFailure(t.getMessage()); }
+            @Override
+            public void onFailure(Call<LogbookResponse> call, Throwable t) {
+                callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
+            }
         });
     }
 
+    /**
+     * GET /api/v1/artikel — mengambil daftar artikel dengan callback pattern.
+     * Mengembalikan list kosong (bukan null) jika data API kosong.
+     */
     public static void GetArtikelRequest(String token, ApiCallback<List<InfoResponse.InfoItem>> callback) {
         ApiClient.getApiService().getArtikelRequest("Bearer " + token).enqueue(new Callback<InfoResponse>() {
             @Override
             public void onResponse(Call<InfoResponse> call, Response<InfoResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                    callback.onSuccess(response.body().getData().getItems());
-                } else { callback.onFailure("Gagal ambil artikel"); }
+                if (response.isSuccessful() && response.body() != null) {
+                    InfoResponse result = response.body();
+                    if (result.isSuccess() && result.getData() != null) {
+                        List<InfoResponse.InfoItem> items = result.getData().getItems();
+                        // Kirim list kosong jika null (API belum ada data)
+                        callback.onSuccess(items != null ? items : new ArrayList<>());
+                    } else {
+                        callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil artikel");
+                    }
+                } else {
+                    callback.onFailure("Gagal terhubung ke server (kode: " + response.code() + ")");
+                }
             }
-            @Override public void onFailure(Call<InfoResponse> call, Throwable t) { callback.onFailure(t.getMessage()); }
+            @Override
+            public void onFailure(Call<InfoResponse> call, Throwable t) {
+                callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
+            }
         });
     }
 }

@@ -73,7 +73,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="History"
+                                android:text="History Logbook"
                                 android:textColor="@color/white"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />
@@ -81,7 +81,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Semua laporan yang sudah dieksekusi akan masuk disini."
+                                android:text="Semua catatan logbook dan kegiatan akan masuk disini."
                                 android:textColor="@color/white" />
 
                         </LinearLayout>
@@ -94,10 +94,32 @@
 
         </FrameLayout>
 
+        <!-- Indikator Loading -->
+        <ProgressBar
+            android:id="@+id/progress_bar_logbook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"/>
+
+        <!-- Empty State -->
+        <TextView
+            android:id="@+id/tv_empty_logbook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="30dp"
+            android:text="Belum ada data logbook"
+            android:textSize="14sp"
+            android:alpha="0.6"
+            android:visibility="gone"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/report"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"/>
 
     </LinearLayout>
 

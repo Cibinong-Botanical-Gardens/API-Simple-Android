@@ -16,47 +16,48 @@ import java.util.List;
 
 import id.mayaksa.simpel.R;
 import id.mayaksa.simpel.model.rest.ApiClient;
-import id.mayaksa.simpel.model.rest.response.LaporanResponse;
+import id.mayaksa.simpel.model.rest.response.InfoResponse;
 
-public class RecyclerViewSummaryAdapter extends RecyclerView.Adapter<RecyclerViewSummaryAdapter.ViewHolder> {
+public class ArtikelAdapter extends RecyclerView.Adapter<ArtikelAdapter.ViewHolder> {
 
     private final Context context;
-    private final List<LaporanResponse.LaporanItem> itemData;
+    private final List<InfoResponse.InfoItem> items;
 
-    public RecyclerViewSummaryAdapter(Context context, List<LaporanResponse.LaporanItem> itemData) {
+    public ArtikelAdapter(Context context, List<InfoResponse.InfoItem> items) {
         this.context = context;
-        this.itemData = itemData;
+        this.items = items;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_recycler_view_summary, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_artikel, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LaporanResponse.LaporanItem item = itemData.get(position);
+        InfoResponse.InfoItem item = items.get(position);
         if (item == null) return;
 
-        holder.title.setText(item.getJudul() != null ? item.getJudul() : "");
+        holder.tvJudul.setText(item.getJudul() != null ? item.getJudul() : "");
+        holder.tvDeskripsi.setText(item.getDeskripsi() != null ? item.getDeskripsi() : "");
 
         if (item.getUser() != null && item.getUser().getNamaUser() != null) {
-            holder.desc.setText(item.getUser().getNamaUser());
+            holder.tvNamaUser.setText(item.getUser().getNamaUser());
         } else {
-            holder.desc.setText(item.getDeskripsi() != null ? item.getDeskripsi() : "");
+            holder.tvNamaUser.setText("Admin");
         }
 
-        if (item.getTanggal() != null) {
-            holder.tvTime.setText(item.getTanggal());
+        if (item.getPublishedAt() != null) {
+            holder.tvTanggal.setText(item.getPublishedAt());
         } else if (item.getCreatedAt() != null) {
-            holder.tvTime.setText(item.getCreatedAt());
+            holder.tvTanggal.setText(item.getCreatedAt());
         } else {
-            holder.tvTime.setText("");
+            holder.tvTanggal.setText("");
         }
-        
-        String imagePath = item.getFotoBefore();
+
+        String imagePath = item.getGambarUrl();
         if (imagePath != null && !imagePath.isEmpty()) {
             String fullUrl;
             if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
@@ -70,27 +71,29 @@ public class RecyclerViewSummaryAdapter extends RecyclerView.Adapter<RecyclerVie
                     .load(fullUrl)
                     .placeholder(R.drawable.bg_card)
                     .error(R.drawable.ic_logo_tumbang)
-                    .into(holder.image);
+                    .into(holder.imgArtikel);
         } else {
-            holder.image.setImageResource(R.drawable.bg_card);
+            holder.imgArtikel.setImageResource(R.drawable.bg_card);
         }
     }
 
     @Override
     public int getItemCount() {
-        return itemData != null ? itemData.size() : 0;
+        return items != null ? items.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
-        TextView title, desc, tvTime;
+        ImageView imgArtikel, imgAvatar;
+        TextView tvJudul, tvDeskripsi, tvNamaUser, tvTanggal;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.image);
-            title = itemView.findViewById(R.id.title);
-            desc = itemView.findViewById(R.id.name);
-            tvTime = itemView.findViewById(R.id.time);
+            imgArtikel = itemView.findViewById(R.id.img_artikel);
+            imgAvatar = itemView.findViewById(R.id.img_avatar_artikel);
+            tvJudul = itemView.findViewById(R.id.tv_judul_artikel);
+            tvDeskripsi = itemView.findViewById(R.id.tv_deskripsi_artikel);
+            tvNamaUser = itemView.findViewById(R.id.tv_nama_user_artikel);
+            tvTanggal = itemView.findViewById(R.id.tv_tanggal_artikel);
         }
     }
 }

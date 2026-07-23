@@ -27,33 +27,46 @@ public class LogbookAdapter extends RecyclerView.Adapter<LogbookAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_recycler_view_report, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_logbook, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LogbookResponse.LogbookItem item = items.get(position);
-        holder.title.setText(item.getJenisKegiatan());
-        holder.area.setText(item.getArea());
-        holder.idTree.setText(item.getIdTree());
-        holder.date.setText(item.getCreateAt());
+        if (item == null) return;
+
+        String titleText = item.getJudul() != null ? item.getJudul() : item.getJenisKegiatan();
+        holder.tvJenisKegiatan.setText(titleText != null ? titleText : "Logbook");
+
+        String areaText = item.getArea() != null ? item.getArea() : item.getIsi();
+        holder.tvArea.setText(areaText != null ? areaText : "-");
+
+        if (item.getIdTree() != null && !item.getIdTree().isEmpty()) {
+            holder.tvIdTree.setText("ID Pohon: " + item.getIdTree());
+            holder.tvIdTree.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvIdTree.setVisibility(View.GONE);
+        }
+
+        String tanggal = item.getTanggal() != null ? item.getTanggal() : item.getCreatedAt();
+        holder.tvTanggal.setText(tanggal != null ? tanggal : "");
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return items != null ? items.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title, area, idTree, date;
+        TextView tvJenisKegiatan, tvArea, tvIdTree, tvTanggal;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            title = itemView.findViewById(R.id.title);
-            area = itemView.findViewById(R.id.name);
-            idTree = itemView.findViewById(R.id.institute);
-            date = itemView.findViewById(R.id.latitude); // Reusing latitude field for date
+            tvJenisKegiatan = itemView.findViewById(R.id.tv_jenis_kegiatan);
+            tvArea = itemView.findViewById(R.id.tv_area);
+            tvIdTree = itemView.findViewById(R.id.tv_id_tree);
+            tvTanggal = itemView.findViewById(R.id.tv_tanggal_logbook);
         }
     }
 }
