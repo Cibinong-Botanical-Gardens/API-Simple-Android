@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * POJO Request untuk endpoint POST /api/v1/laporan/{id}.
  * Backend Laravel mewajibkan field berikut saat update laporan:
  * - status (required: pending, diproses, selesai, ditolak)
+ * - id_status (optional mapping: 1=pending, 2=diproses, 3=selesai, 4=ditolak)
  * - judul (required)
  * - deskripsi (required)
  * - jenis_laporan (required: konservasi, kesehatan pohon, non-konservasi, lainnya)
@@ -18,6 +19,9 @@ public class UpdateLaporanRequest {
 
     @SerializedName("status")
     private String status;
+
+    @SerializedName("id_status")
+    private String idStatus;
 
     @SerializedName("judul")
     private String judul;
@@ -43,14 +47,11 @@ public class UpdateLaporanRequest {
     public UpdateLaporanRequest() {
     }
 
-    public UpdateLaporanRequest(String status) {
-        this.status = status;
-    }
-
-    public UpdateLaporanRequest(String status, String judul, String deskripsi,
+    public UpdateLaporanRequest(String status, String idStatus, String judul, String deskripsi,
                                 String jenisLaporan, String prioritas,
                                 String latitude, String longitude, String isKoleksi) {
         this.status = status;
+        this.idStatus = idStatus;
         this.judul = judul;
         this.deskripsi = deskripsi;
         this.jenisLaporan = jenisLaporan;
@@ -66,6 +67,14 @@ public class UpdateLaporanRequest {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getIdStatus() {
+        return idStatus;
+    }
+
+    public void setIdStatus(String idStatus) {
+        this.idStatus = idStatus;
     }
 
     public String getJudul() {

@@ -2,7 +2,6 @@ package id.mayaksa.simpel.model.rest;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import id.mayaksa.simpel.model.Report;
 import id.mayaksa.simpel.model.User;
 import id.mayaksa.simpel.model.rest.request.UpdateLaporanRequest;
 import id.mayaksa.simpel.model.rest.response.AuthResponse;
@@ -143,65 +141,6 @@ public class ApiFunction {
         });
     }
 
-    /**
-     * GET /api/v1/laporan — mengambil daftar laporan dengan callback pattern.
-     * Mengembalikan list kosong (bukan null) jika data API kosong.
-     */
-    public static void GetLaporanRequest(String token, ApiCallback<List<LaporanResponse.LaporanItem>> callback) {
-        ApiClient.getApiService().getLaporanRequest("Bearer " + token).enqueue(new Callback<LaporanResponse>() {
-            @Override
-            public void onResponse(Call<LaporanResponse> call, Response<LaporanResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    LaporanResponse result = response.body();
-                    if (result.isSuccess() && result.getData() != null) {
-                        List<LaporanResponse.LaporanItem> items = result.getData().getItems();
-                        // Kirim list kosong jika null (API belum ada data)
-                        callback.onSuccess(items != null ? items : new ArrayList<>());
-                    } else {
-                        callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil laporan");
-                    }
-                } else {
-                    callback.onFailure("Gagal terhubung ke server (kode: " + response.code() + ")");
-                }
-            }
-            @Override
-            public void onFailure(Call<LaporanResponse> call, Throwable t) {
-                Log.e("LAPORAN_ERROR", "Error: " + t.getMessage(), t);
-                callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
-            }
-        });
-    }
-
-    /**
-     * GET /api/v1/laporan?page=N — mengambil data laporan per halaman untuk infinite scroll.
-     * Callback mengembalikan DataWrapper yang berisi items + info pagination (last_page, current_page).
-     */
-    public static void GetLaporanPagedRequest(String token, int page, ApiCallback<LaporanResponse.DataWrapper> callback) {
-        ApiClient.getApiService().getLaporanPagedRequest("Bearer " + token, page).enqueue(new Callback<LaporanResponse>() {
-            @Override
-            public void onResponse(Call<LaporanResponse> call, Response<LaporanResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    LaporanResponse result = response.body();
-                    if (result.isSuccess() && result.getData() != null) {
-                        callback.onSuccess(result.getData());
-                    } else {
-                        callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil laporan");
-                    }
-                } else {
-                    callback.onFailure("Gagal terhubung ke server (kode: " + response.code() + ")");
-                }
-            }
-            @Override
-            public void onFailure(Call<LaporanResponse> call, Throwable t) {
-                Log.e("LAPORAN_PAGED_ERROR", "Error: " + t.getMessage(), t);
-                callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
-            }
-        });
-    }
-
-    /**
-     * GET /api/v1/laporan?status=X&page=N — mengambil data laporan dengan filter status & pagination.
-     */
     public static void GetLaporanFilteredRequest(String token, String status, Integer page, ApiCallback<LaporanResponse.DataWrapper> callback) {
         ApiClient.getApiService().getLaporanFilteredRequest("Bearer " + token, status, page).enqueue(new Callback<LaporanResponse>() {
             @Override
@@ -219,17 +158,13 @@ public class ApiFunction {
             }
             @Override
             public void onFailure(Call<LaporanResponse> call, Throwable t) {
-                Log.e("LAPORAN_FILTERED_ERROR", "Error: " + t.getMessage(), t);
                 callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
             }
         });
     }
 
     /**
-     * POST /api/v1/laporan/{id} — update laporan (khusus admin/root).
-     * Callback: onSuccess(UpdateLaporanResponse) jika berhasil, onFailure(message) jika gagal.
-     * TODO: Jika backend butuh field tambahan (catatan_admin, dll), cukup tambahkan field
-     *       di UpdateLaporanRequest.java dan set nilainya di request object sebelum memanggil method ini.
+     * POST /api/v1/laporan/{id} — update laporan dengan spoofing _method=PUT.
      */
     public static void UpdateLaporanRequest(String token, int idLaporan,
                                             UpdateLaporanRequest request,
@@ -237,7 +172,9 @@ public class ApiFunction {
         ApiClient.getApiService().updateLaporan(
                         "Bearer " + token,
                         idLaporan,
+                        "PUT",
                         request.getStatus(),
+                        request.getIdStatus(),
                         request.getJudul(),
                         request.getDeskripsi(),
                         request.getJenisLaporan(),
@@ -248,39 +185,33 @@ public class ApiFunction {
                 )
                 .enqueue(new Callback<UpdateLaporanResponse>() {
                     @Override
-                    public void onResponse(Call<UpdateLaporanResponse> call,
-                                           Response<UpdateLaporanResponse> response) {
+                    public void onResponse(Call<UpdateLaporanResponse> call, Response<UpdateLaporanResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             UpdateLaporanResponse result = response.body();
                             if (result.isSuccess()) {
                                 callback.onSuccess(result);
                             } else {
-                                callback.onFailure(result.getMessage() != null
-                                        ? result.getMessage() : "Gagal update laporan");
+                                callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal update laporan");
                             }
-                        } else if (response.code() == 403) {
-                            callback.onFailure("Akses ditolak: Anda tidak memiliki izin untuk mengubah laporan ini");
                         } else if (response.code() == 422) {
                             try {
                                 String errorBody = response.errorBody().string();
-                                org.json.JSONObject jsonObject = new org.json.JSONObject(errorBody);
+                                JSONObject jsonObject = new JSONObject(errorBody);
                                 StringBuilder message = new StringBuilder();
                                 if (jsonObject.has("message")) {
                                     message.append(jsonObject.getString("message")).append("\n");
                                 }
                                 if (jsonObject.has("errors")) {
-                                    org.json.JSONObject errors = jsonObject.getJSONObject("errors");
-                                    java.util.Iterator<String> keys = errors.keys();
+                                    JSONObject errors = jsonObject.getJSONObject("errors");
+                                    Iterator<String> keys = errors.keys();
                                     while (keys.hasNext()) {
                                         String key = keys.next();
-                                        message.append("- ")
-                                               .append(errors.getJSONArray(key).get(0))
-                                               .append("\n");
+                                        message.append("- ").append(errors.getJSONArray(key).get(0)).append("\n");
                                     }
                                 }
-                                callback.onFailure(message.toString().trim());
+                                callback.onFailure(message.toString());
                             } catch (Exception e) {
-                                callback.onFailure("Validasi gagal (kode: 422)");
+                                callback.onFailure("Gagal Validasi: " + response.code());
                             }
                         } else {
                             callback.onFailure("Gagal update laporan (kode: " + response.code() + ")");
@@ -289,16 +220,34 @@ public class ApiFunction {
 
                     @Override
                     public void onFailure(Call<UpdateLaporanResponse> call, Throwable t) {
-                        Log.e("UPDATE_LAPORAN_ERROR", "Error: " + t.getMessage(), t);
-                        callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
+                        callback.onFailure("Error: " + t.getMessage());
                     }
                 });
     }
 
-    /**
-     * GET /api/v1/logbook — mengambil daftar logbook dengan callback pattern.
-     * Mengembalikan list kosong (bukan null) jika data API kosong.
-     */
+    public static void GetLaporanRequest(String token, ApiCallback<List<LaporanResponse.LaporanItem>> callback) {
+        ApiClient.getApiService().getLaporanRequest("Bearer " + token).enqueue(new Callback<LaporanResponse>() {
+            @Override
+            public void onResponse(Call<LaporanResponse> call, Response<LaporanResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LaporanResponse result = response.body();
+                    if (result.isSuccess() && result.getData() != null) {
+                        List<LaporanResponse.LaporanItem> items = result.getData().getItems();
+                        callback.onSuccess(items != null ? items : new ArrayList<>());
+                    } else {
+                        callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil laporan");
+                    }
+                } else {
+                    callback.onFailure("Gagal terhubung ke server (kode: " + response.code() + ")");
+                }
+            }
+            @Override
+            public void onFailure(Call<LaporanResponse> call, Throwable t) {
+                callback.onFailure("Tidak dapat terhubung ke server: " + t.getMessage());
+            }
+        });
+    }
+
     public static void GetLogbookRequest(String token, ApiCallback<List<LogbookResponse.LogbookItem>> callback) {
         ApiClient.getApiService().getLogbookRequest("Bearer " + token).enqueue(new Callback<LogbookResponse>() {
             @Override
@@ -307,7 +256,6 @@ public class ApiFunction {
                     LogbookResponse result = response.body();
                     if (result.isSuccess() && result.getData() != null) {
                         List<LogbookResponse.LogbookItem> items = result.getData().getItems();
-                        // Kirim list kosong jika null (API belum ada data)
                         callback.onSuccess(items != null ? items : new ArrayList<>());
                     } else {
                         callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil logbook");
@@ -323,10 +271,6 @@ public class ApiFunction {
         });
     }
 
-    /**
-     * GET /api/v1/artikel — mengambil daftar artikel dengan callback pattern.
-     * Mengembalikan list kosong (bukan null) jika data API kosong.
-     */
     public static void GetArtikelRequest(String token, ApiCallback<List<InfoResponse.InfoItem>> callback) {
         ApiClient.getApiService().getArtikelRequest("Bearer " + token).enqueue(new Callback<InfoResponse>() {
             @Override
@@ -335,7 +279,6 @@ public class ApiFunction {
                     InfoResponse result = response.body();
                     if (result.isSuccess() && result.getData() != null) {
                         List<InfoResponse.InfoItem> items = result.getData().getItems();
-                        // Kirim list kosong jika null (API belum ada data)
                         callback.onSuccess(items != null ? items : new ArrayList<>());
                     } else {
                         callback.onFailure(result.getMessage() != null ? result.getMessage() : "Gagal ambil artikel");

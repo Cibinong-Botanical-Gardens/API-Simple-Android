@@ -273,6 +273,12 @@ public class LaporanDetailActivity extends AppCompatActivity {
         Chip selectedChip = binding.chipGroupStatus.findViewById(selectedChipId);
         String status = selectedChip.getText().toString().toLowerCase();
 
+        // Map status string ke ID (biasanya backend Laravel butuh ID numerik untuk foreign key)
+        String idStatus = "1"; // default pending
+        if (selectedChipId == R.id.chip_diproses) idStatus = "2";
+        else if (selectedChipId == R.id.chip_selesai) idStatus = "3";
+        else if (selectedChipId == R.id.chip_ditolak) idStatus = "4";
+
         // Ambil lokasi & is_koleksi existing
         String latitude = (laporanItem.getLatitude() != null && !laporanItem.getLatitude().isEmpty())
                 ? laporanItem.getLatitude() : "-6.595";
@@ -286,6 +292,7 @@ public class LaporanDetailActivity extends AppCompatActivity {
         // Buat request body lengkap untuk backend
         UpdateLaporanRequest request = new UpdateLaporanRequest(
                 status,
+                idStatus,
                 judul,
                 deskripsi,
                 jenisLaporan,

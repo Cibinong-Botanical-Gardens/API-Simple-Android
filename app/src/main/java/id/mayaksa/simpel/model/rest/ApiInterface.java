@@ -1,6 +1,5 @@
 package id.mayaksa.simpel.model.rest;
 
-import id.mayaksa.simpel.model.rest.request.UpdateLaporanRequest;
 import id.mayaksa.simpel.model.rest.response.AuthResponse;
 import id.mayaksa.simpel.model.rest.response.InfoResponse;
 import id.mayaksa.simpel.model.rest.response.LaporanResponse;
@@ -10,7 +9,6 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -59,7 +57,9 @@ public interface ApiInterface {
     Call<UpdateLaporanResponse> updateLaporan(
             @Header("Authorization") String token,
             @Path("id") int id,
+            @Field("_method") String method,
             @Field("status") String status,
+            @Field("id_status") String idStatus,
             @Field("judul") String judul,
             @Field("deskripsi") String deskripsi,
             @Field("jenis_laporan") String jenisLaporan,
